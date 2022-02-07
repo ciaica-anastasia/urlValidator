@@ -3,8 +3,10 @@ package UrlValidator;
 public class Main {
     public static void main(String[]args){
 
-        UrlValidator validator = new UrlValidator().newOptions().allowAllLogins(false).build();
-
+        UrlValidator validator = new Options().setNewLogins(logins -> false).build();
+        UrlValidator test = new Options().setNewHosts(logins -> true).build();
+        final UrlValidator tmp = new UrlValidator( new Options() );
+        System.out.println("OK!");
         /*
         Это с последнего созвона пример от Антона:
 

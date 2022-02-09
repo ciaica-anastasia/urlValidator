@@ -31,9 +31,9 @@ public final class UrlValidator {
         return true;
     }
 
-    private ArrayList<UrlElement> urlParser(String url){
+    private UrlElement urlParser(String url){
         // TODO
-        ArrayList<UrlElement> parsed = new ArrayList<UrlElement>(3);
+        UrlElement parsed = new UrlElement();
         return parsed;
     }
 
@@ -43,30 +43,14 @@ public final class UrlValidator {
     }
 }
 
-abstract class UrlElement{
-    String data = null;
+class UrlElement{
+    String scheme;
+    String port;
+    String query;
+    String path;
+    String fragment;
+
+    UrlElement(){
+        // default
+    }
 }
-
-/*
-
-class Scheme implements UrlElement{
-
-}
-
-class Port implements UrlElement{
-
-}
-
-class Query implements UrlElement{
-
-}
-
-class Path implements UrlElement{
-
-}
-
-class Fragment implements UrlElement{
-
-}
-
- */

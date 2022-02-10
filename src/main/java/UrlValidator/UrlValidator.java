@@ -27,14 +27,14 @@ public final class UrlValidator {
     }
 
     public boolean isValid(String url){
-        // TODO
-        return true;
+        UrlParser parser = new UrlParser();
+        UrlElement element = urlParser(urlNormalizer(url), parser);
+        return element.HostIsValid() && element.SchemeIsValid() && element.PortIsValid()
+                && element.QueryIsValid() && element.PathIsValid() && element.FragmentIsValid();
     }
 
-    private UrlElement urlParser(String url){
-        // TODO
-        UrlElement parsed = new UrlElement();
-        return parsed;
+    private UrlElement urlParser(String url, UrlParser parser){
+        return parser.urlParser(url, "");
     }
 
     private String urlNormalizer(String url){
@@ -44,6 +44,7 @@ public final class UrlValidator {
 }
 
 class UrlElement{
+    String host;
     String scheme;
     String port;
     String query;
@@ -53,4 +54,41 @@ class UrlElement{
     UrlElement(){
         // default
     }
+
+    public UrlElement(String host, String scheme, String port, String query, String url, String fragment) {
+        this.host = host;
+        this.scheme = scheme;
+        this.port = port;
+        this.query = query;
+        this.path = url;
+        this.fragment = fragment;
+    }
+
+    // Можете написать, как вам будет удобнее, это сделала, чтобы вызывать в IsValid
+    boolean HostIsValid(){
+        //TODO
+        return false;
+    }
+
+    boolean SchemeIsValid(){
+        //TODO
+        return false;
+    }
+    boolean PortIsValid(){
+        //TODO
+        return false;
+    }
+    boolean QueryIsValid(){
+        //TODO
+        return false;
+    }
+    boolean PathIsValid(){
+        //TODO
+        return false;
+    }
+    boolean FragmentIsValid(){
+        //TODO
+        return false;
+    }
+
 }

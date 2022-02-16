@@ -1,7 +1,6 @@
 package UrlValidator;
 
 import org.jetbrains.annotations.NotNull;
-import java.util.ArrayList;
 import java.util.function.Predicate;
 
 // @NotNull надо либо использовать повсеместно, либо не использовать совсем
@@ -27,14 +26,13 @@ public final class UrlValidator {
     }
 
     public boolean isValid(String url){
-        UrlParser parser = new UrlParser();
-        UrlElement element = urlParser(urlNormalizer(url), parser);
+        UrlElement element = urlParser(urlNormalizer(url));
         return element.HostIsValid() && element.SchemeIsValid() && element.PortIsValid()
                 && element.QueryIsValid() && element.PathIsValid() && element.FragmentIsValid();
     }
 
-    private UrlElement urlParser(String url, UrlParser parser){
-        return parser.urlParser(url, "");
+    private UrlElement urlParser(String url){
+        return new UrlParser().parse(url);
     }
 
     private String urlNormalizer(String url){
@@ -42,6 +40,8 @@ public final class UrlValidator {
         return url;
     }
 }
+
+
 
 class UrlElement{
     String host;

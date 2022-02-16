@@ -1,5 +1,7 @@
-import java.lang.reflect.Array;
-import java.util.ArrayList;
+package UrlValidator;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,7 +16,7 @@ public class UrlParser {
     //Unsafe bytes to be removed per WHATWG spec
     List<String> unsafeUrlBytesToRemove = Arrays.asList("\t", "\r", "\n");
 
-    List<String> SplitNetcol(String url, int start) {
+    List<String> SplitNetcol(@NotNull String url, int start) {
         int cut = url.length(); //position of end of domain part of url, default is end
         char[] delimeters = new char[]{'/', '?', '#'};
         for (char delimeter : delimeters) { // look for delimiters; the order is NOT important
@@ -105,8 +107,9 @@ public class UrlParser {
         return Arrays.asList(scheme, netloc, url, query, fragment);
     }
 
-    List<String> HostInfo(String netloc) {
-        String hostname = netloc, port = "";
+    List<String> HostInfo(@NotNull String netloc) {
+        String hostname = netloc;
+        String port = "";
         int index = netloc.indexOf("[");
         if (index != -1) {
             String haveOpenBr = netloc.substring(0, index);
@@ -126,11 +129,12 @@ public class UrlParser {
         return Arrays.asList(hostname, port);
     }
 
-    UrlElement urlParser(String url, String scheme) {
-        List<String> splitResult = UrlSplit(url, scheme);
-        scheme = splitResult.get(0);
+    UrlElement parse(String urlAddress) {
+        List<String> splitResult = UrlSplit(urlAddress, "");
+
+        String scheme = splitResult.get(0);
         String netloc = splitResult.get(1);
-        url = splitResult.get(2);
+        String url = splitResult.get(2);
         String query = splitResult.get(3);
         String fragment = splitResult.get(4);
 

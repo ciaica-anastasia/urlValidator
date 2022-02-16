@@ -1,7 +1,10 @@
 package UrlValidator;
 
+import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
-import java.util.ArrayList;
+
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Predicate;
 
 // @NotNull надо либо использовать повсеместно, либо не использовать совсем
@@ -26,23 +29,24 @@ public final class UrlValidator {
         this.fragments = userOptions.fragments;
     }
 
-    public boolean isValid(String url){
-        UrlParser parser = new UrlParser();
-        UrlElement element = urlParser(urlNormalizer(url), parser);
+    public boolean isValid(@NotNull String url){
+        UrlElement element = urlParser(urlNormalizer(url));
         return element.HostIsValid() && element.SchemeIsValid() && element.PortIsValid()
                 && element.QueryIsValid() && element.PathIsValid() && element.FragmentIsValid();
     }
 
-    private UrlElement urlParser(String url, UrlParser parser){
-        return parser.urlParser(url, "");
+    private UrlElement urlParser(@NotNull String url){
+        return new UrlParser().Parse(url);
     }
 
-    private String urlNormalizer(String url){
+    private String urlNormalizer(@NotNull String url){
         // TODO
         return url;
     }
 }
 
+
+@NoArgsConstructor
 class UrlElement{
     String host;
     String scheme;
@@ -51,9 +55,10 @@ class UrlElement{
     String path;
     String fragment;
 
-    UrlElement(){
-        // default
-    }
+    private static final String subDelimits = "!$&'()*+,;=";
+    private static final String notReserved = "-._~";
+    private static final long minPort = 0;
+    private static final long maxPort = 65535;
 
     public UrlElement(String host, String scheme, String port, String query, String url, String fragment) {
         this.host = host;
@@ -70,25 +75,50 @@ class UrlElement{
         return false;
     }
 
+    private boolean BasicCheck(@NotNull String paramForCheck, @NotNull String allowedSymbols){
+        Set<Character> symbolsSet = new HashSet<>();
+        for(Character curChar : allowedSymbols.toCharArray()){
+            symbolsSet.add(curChar);
+        }
+        if( paramForCheck.length() == 0 ){
+            return false;
+        }
+        for(Character curChar : paramForCheck.toCharArray()){
+            if( !(Character.isAlphabetic(curChar) || symbolsSet.contains(curChar)) ){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // https://habr.com/ru/post/232385/
     boolean SchemeIsValid(){
-        //TODO
-        return false;
+        return BasicCheck(scheme, "+-.") && Character.isLetter(scheme.charAt(0));
     }
-    boolean PortIsValid(){
-        //TODO
-        return false;
-    }
-    boolean QueryIsValid(){
-        //TODO
-        return false;
-    }
+
     boolean PathIsValid(){
-        //TODO
-        return false;
+        return BasicCheck(path, ":@%" + subDelimits + notReserved);
     }
+
+    boolean QueryIsValid(){
+        return BasicCheck(query, ":@/?%" + subDelimits + notReserved);
+    }
+
     boolean FragmentIsValid(){
-        //TODO
-        return false;
+        return true;
+    }
+
+    boolean PortIsValid(){
+        if( (port == null) || (port.length() == 0) ){
+            return false;
+        }
+        for(Character curChar: port.toCharArray()){
+            if( !Character.isDigit(curChar) ){
+                return false;
+            }
+        }
+        long portID = Long.parseLong(port);
+        return (portID >= minPort) && (portID <= maxPort);
     }
 
 }

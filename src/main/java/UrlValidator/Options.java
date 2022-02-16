@@ -1,5 +1,6 @@
 package UrlValidator;
 
+import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import java.util.function.Predicate;
@@ -13,6 +14,7 @@ import java.util.function.Predicate;
  */
 
 // @NotNull надо либо использовать повсеместно, либо не использовать совсем
+@NoArgsConstructor
 public final class Options{
 
     public Predicate<String> schemes;
@@ -23,10 +25,6 @@ public final class Options{
     public Predicate<String> paths;
     public Predicate<String> queries;
     public Predicate<String> fragments;
-
-    public Options(){
-        // Default
-    }
 
     public Options setNewSchemes(Predicate<String> schemes){
         this.schemes = schemes;

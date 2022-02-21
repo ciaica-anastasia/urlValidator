@@ -3,6 +3,7 @@ package UrlValidator;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+
 import java.util.function.Predicate;
 
 /*
@@ -15,7 +16,7 @@ import java.util.function.Predicate;
 
 // @NotNull надо либо использовать повсеместно, либо не использовать совсем
 @NoArgsConstructor
-public final class Options{
+public final class Options {
 
     public Predicate<String> schemes;
     public Predicate<String> logins;
@@ -26,48 +27,48 @@ public final class Options{
     public Predicate<String> queries;
     public Predicate<String> fragments;
 
-    public Options setNewSchemes(Predicate<String> schemes){
+    public Options setNewSchemes(Predicate<String> schemes) {
         this.schemes = schemes;
         return this;
     }
 
-    public Options setNewLogins(Predicate<String> logins){
+    public Options setNewLogins(Predicate<String> logins) {
         this.logins = logins;
         return this;
     }
 
-    public Options setNewPasswords(Predicate<String> passwords){
+    public Options setNewPasswords(Predicate<String> passwords) {
         this.passwords = passwords;
         return this;
     }
 
-    public Options setNewHosts(Predicate<String> hosts){
+    public Options setNewHosts(Predicate<String> hosts) {
         this.hosts = hosts;
         return this;
     }
 
-    public Options setNewPorts(Predicate<String> ports){
+    public Options setNewPorts(Predicate<String> ports) {
         this.ports = ports;
         return this;
     }
 
-    public Options setNewPaths(Predicate<String> paths){
+    public Options setNewPaths(Predicate<String> paths) {
         this.paths = paths;
         return this;
     }
 
-    public Options setNewQueries(Predicate<String> queries){
+    public Options setNewQueries(Predicate<String> queries) {
         this.queries = queries;
         return this;
     }
 
-    public Options setNewFragments(Predicate<String> fragments){
+    public Options setNewFragments(Predicate<String> fragments) {
         this.fragments = fragments;
         return this;
     }
 
     @Contract(" -> new")
-    public @NotNull UrlValidator build(){
+    public @NotNull UrlValidator build() {
         return new UrlValidator(this);
     }
 

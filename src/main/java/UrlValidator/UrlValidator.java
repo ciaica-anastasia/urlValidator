@@ -3,9 +3,9 @@ package UrlValidator;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 // @NotNull надо либо использовать повсеместно, либо не использовать совсем
 public final class UrlValidator {
@@ -18,7 +18,7 @@ public final class UrlValidator {
     private final Predicate<String> queries;
     private final Predicate<String> fragments;
 
-    public UrlValidator(@NotNull Options userOptions){
+    public UrlValidator(@NotNull Options userOptions) {
         this.schemes = userOptions.schemes;
         this.logins = userOptions.logins;
         this.passwords = userOptions.passwords;
@@ -29,17 +29,17 @@ public final class UrlValidator {
         this.fragments = userOptions.fragments;
     }
 
-    public boolean isValid(@NotNull String url){
+    public boolean isValid(@NotNull String url) {
         UrlElement element = urlParser(urlNormalizer(url));
-        return element.HostIsValid() && element.SchemeIsValid() && element.PortIsValid()
-                && element.QueryIsValid() && element.PathIsValid() && element.FragmentIsValid();
+        return element.hostIsValid() && element.schemeIsValid() && element.portIsValid()
+                && element.queryIsValid() && element.pathIsValid() && element.fragmentIsValid();
     }
 
-    private UrlElement urlParser(@NotNull String url){
-        return new UrlParser().Parse(url);
+    private @NotNull UrlElement urlParser(@NotNull String url) {
+        return new UrlParser().parse(url);
     }
 
-    private String urlNormalizer(@NotNull String url){
+    private String urlNormalizer(@NotNull String url) {
         // TODO
         return url;
     }
@@ -47,7 +47,7 @@ public final class UrlValidator {
 
 
 @NoArgsConstructor
-class UrlElement{
+final class UrlElement {
     String host;
     String scheme;
     String port;
@@ -55,10 +55,10 @@ class UrlElement{
     String path;
     String fragment;
 
-    private static final String subDelimits = "!$&'()*+,;=";
-    private static final String notReserved = "-._~";
-    private static final long minPort = 0;
-    private static final long maxPort = 65535;
+    private static final String SUB_DELIMITS = "!$&'()*+,;=";
+    private static final String NOT_RESERVED = "-._~";
+    private static final long MIN_PORT = 0;
+    private static final long MAX_PORT = 65535;
 
     public UrlElement(String host, String scheme, String port, String query, String url, String fragment) {
         this.host = host;
@@ -69,22 +69,20 @@ class UrlElement{
         this.fragment = fragment;
     }
 
-    // Можете написать, как вам будет удобнее, это сделала, чтобы вызывать в IsValid
-    boolean HostIsValid(){
+    // Можете написать, как вам будет удобнее, это сделала, чтобы вызывать в isValid
+    boolean hostIsValid() {
         //TODO
-        return false;
+        return true;
     }
 
-    private boolean BasicCheck(@NotNull String paramForCheck, @NotNull String allowedSymbols){
-        Set<Character> symbolsSet = new HashSet<>();
-        for(Character curChar : allowedSymbols.toCharArray()){
-            symbolsSet.add(curChar);
-        }
-        if( paramForCheck.length() == 0 ){
+    private boolean basicCheck(@NotNull String paramForCheck, @NotNull String allowedSymbols) {
+        if (paramForCheck.isEmpty()) {
             return false;
         }
-        for(Character curChar : paramForCheck.toCharArray()){
-            if( !(Character.isAlphabetic(curChar) || symbolsSet.contains(curChar)) ){
+        Set<Character> symbols = allowedSymbols.chars()
+                .mapToObj(e -> (char) e).collect(Collectors.toSet());
+        for (Character curChar : paramForCheck.toCharArray()) {
+            if (!(Character.isAlphabetic(curChar) || symbols.contains(curChar))) {
                 return false;
             }
         }
@@ -92,33 +90,33 @@ class UrlElement{
     }
 
     // https://habr.com/ru/post/232385/
-    boolean SchemeIsValid(){
-        return BasicCheck(scheme, "+-.") && Character.isLetter(scheme.charAt(0));
+    boolean schemeIsValid() {
+        return basicCheck(scheme, "+-.") && Character.isLetter(scheme.charAt(0));
     }
 
-    boolean PathIsValid(){
-        return BasicCheck(path, ":@%" + subDelimits + notReserved);
+    boolean pathIsValid() {
+        return basicCheck(path, ":@%" + SUB_DELIMITS + NOT_RESERVED);
     }
 
-    boolean QueryIsValid(){
-        return BasicCheck(query, ":@/?%" + subDelimits + notReserved);
+    boolean queryIsValid() {
+        return basicCheck(query, ":@/?%" + SUB_DELIMITS + NOT_RESERVED);
     }
 
-    boolean FragmentIsValid(){
+    boolean fragmentIsValid() {
         return true;
     }
 
-    boolean PortIsValid(){
-        if( (port == null) || (port.length() == 0) ){
+    boolean portIsValid() {
+        if ((port == null) || (port.isEmpty())) {
             return false;
         }
-        for(Character curChar: port.toCharArray()){
-            if( !Character.isDigit(curChar) ){
+        for (Character curChar : port.toCharArray()) {
+            if (!Character.isDigit(curChar)) {
                 return false;
             }
         }
-        long portID = Long.parseLong(port);
-        return (portID >= minPort) && (portID <= maxPort);
+        final long portId = Long.parseLong(port);
+        return (portId >= MIN_PORT) && (portId <= MAX_PORT);
     }
 
 }

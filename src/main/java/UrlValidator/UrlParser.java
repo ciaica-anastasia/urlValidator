@@ -6,10 +6,6 @@ import java.util.Arrays;
 import org.jetbrains.annotations.NotNull;
 
 public final class UrlParser {
-    private final List<String> usesParams = Arrays.asList(" ", "ftp", "hdl", "prosper", "http", "imap",
-            "https", "shttp", "rtsp", "rtspu", "sip", "sips",
-            "mms", "sftp", "tel");
-
     // Characters valid in scheme names
     private final String schemeChars = ("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+-.");
 

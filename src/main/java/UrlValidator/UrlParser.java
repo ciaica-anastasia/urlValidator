@@ -1,5 +1,3 @@
-package UrlValidator;
-
 import java.util.List;
 import java.util.Arrays;
 
@@ -16,7 +14,8 @@ public final class UrlParser {
     //Unsafe bytes to be removed per WHATWG spec
     private final List<String> unsafeUrlBytesToRemove = Arrays.asList("\t", "\r", "\n");
 
-    private @NotNull List<String> splitNetcol(@NotNull String url, int start) {
+    private @NotNull HostPort splitNetcol(@NotNull String url) {
+        int start = 2;
         int cut = url.length(); //position of end of domain part of url, default is end
         char[] delimiters = {'/', '?', '#'};
         for (char delimiter : delimiters) { // look for delimiters; the order is NOT important
@@ -25,9 +24,9 @@ public final class UrlParser {
                 cut = Math.min(cut, firstCut + start);
             }
         }
-        return Arrays.asList(url.substring(start, cut), url.substring(cut));
+        return new HostPort(url.substring(start, cut), url.substring(cut));
     }
-    
+
     static class UrlSplitted {
         private
         String scheme;
@@ -44,7 +43,7 @@ public final class UrlParser {
             fragment = newFragment;
         }
     }
-    
+
     static class HostPort {
         String hostname;
         String port;
@@ -73,7 +72,7 @@ public final class UrlParser {
             boolean flag = false;
             for (int j = 0; j < i; ++j) {
                 char c = charUrl[j];
-                if (!scheme_chars.contains(Character.toString(c))) {
+                if (!schemeChars.contains(Character.toString(c))) {
                     flag = true;
                     break;
                 }
@@ -98,11 +97,11 @@ public final class UrlParser {
         }
         return getUrlSplitted(newUrl, newScheme, netloc, query, fragment);
     }
-    
+
     private @NotNull UrlParser.UrlSplitted getUrlSplitted(@NotNull String newUrl,@NotNull String newScheme, String netloc, String query, String fragment) {
         if (newUrl.startsWith("//")) {
-            netloc = SplitNetcol(newUrl, 2).get(0);
-            newUrl = SplitNetcol(newUrl, 2).get(1);
+            netloc = splitNetcol(newUrl).hostname;
+            newUrl = splitNetcol(newUrl).port;
         }
         if (newUrl.contains("#")) {
             int indexCut = newUrl.indexOf('#');
@@ -118,7 +117,7 @@ public final class UrlParser {
         }
         return new UrlSplitted(newScheme, netloc, newUrl, query, fragment);
     }
-    
+
     private @NotNull HostPort hostInfo(@NotNull String netloc) {
         String hostname = netloc, port = "";
         int index = netloc.indexOf('[');
@@ -140,10 +139,10 @@ public final class UrlParser {
     }
 
     public @NotNull UrlElement parse(@NotNull String urlAddress) {
-       UrlSplitted splitResult = UrlSplit(oldUrl, "");
+        UrlSplitted splitResult = urlSplit(urlAddress, "");
 
         //Теперь надо отделить hostname и port
-        HostPort parsedHost = HostInfo(splitResult.netloc);
+        HostPort parsedHost = hostInfo(splitResult.netloc);
         return new UrlElement(parsedHost.hostname, splitResult.scheme, parsedHost.port, splitResult.query, splitResult.url, splitResult.fragment);
     }
 }

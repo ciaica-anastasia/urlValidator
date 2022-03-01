@@ -42,7 +42,7 @@
             <configuration>
                 <archive>
                     <manifest>
-                        <mainClass>UrlValidator.Main</mainClass>
+                        <mainClass>urlValidator.Main</mainClass>
                     </manifest>
                 </archive>
             </configuration>

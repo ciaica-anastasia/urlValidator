@@ -10,7 +10,7 @@ public final class UrlParser {
     //Unsafe bytes to be removed per WHATWG spec
     private final List<String> unsafeUrlBytesToRemove = Arrays.asList("\t", "\r", "\n");
 
-     @NotNull HostPort splitNetcol(@NotNull String url) {
+    @NotNull HostPort splitNetcol(@NotNull String url) {
         int start = 2;
         int cut = url.length(); //position of end of domain part of url, default is end
         char[] delimiters = {'/', '?', '#'};
@@ -20,8 +20,8 @@ public final class UrlParser {
                 cut = Math.min(cut, firstCut + start);
             }
         }
-         String a = url.substring(start, cut);
-         String b = url.substring(cut);
+        String a = url.substring(start, cut);
+        String b = url.substring(cut);
         return new HostPort(url.substring(start, cut), url.substring(cut));
     }
 
@@ -32,8 +32,8 @@ public final class UrlParser {
         String url;
         String query;
         String fragment;
-        public
-        UrlSplitted (String newScheme, String newNetloc, String newUrl, String newQuery, String newFragment) {
+
+        public UrlSplitted(String newScheme, String newNetloc, String newUrl, String newQuery, String newFragment) {
             scheme = newScheme;
             netloc = newNetloc;
             url = newUrl;
@@ -45,6 +45,7 @@ public final class UrlParser {
     static class HostPort {
         String hostname;
         String port;
+
         HostPort(String newHostname, String newPort) {
             hostname = newHostname;
             port = newPort;
@@ -98,7 +99,7 @@ public final class UrlParser {
         return getUrlSplitted(newUrl, newScheme, netloc, query, fragment);
     }
 
-    private @NotNull UrlParser.UrlSplitted getUrlSplitted(@NotNull String url,@NotNull String newScheme, String netloc, String query, String fragment) {
+    private @NotNull UrlParser.UrlSplitted getUrlSplitted(@NotNull String url, @NotNull String newScheme, String netloc, String query, String fragment) {
         String newUrl = url;
         if (newUrl.startsWith("//")) {
             netloc = splitNetcol(newUrl).hostname;

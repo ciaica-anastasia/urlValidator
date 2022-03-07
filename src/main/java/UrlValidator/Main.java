@@ -1,4 +1,4 @@
-package urlValidator;
+package UrlValidator;
 
 public class Main {
     public static void main(String[] args) {
@@ -33,8 +33,8 @@ public class Main {
 
         /*
         Это с последнего созвона пример от Антона:
-            final urlValidator validation = new urlValidator(
-                new urlValidator.Options().authorityValidation(
+            final UrlValidator validation = new UrlValidator(
+                new UrlValidator.Options().authorityValidation(
                     new DefaultAuthorityValidation(
                         new DomainValidation(new DomainValidation.Options()
                         .tldValidation(tld -> true)

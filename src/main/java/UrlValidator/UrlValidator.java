@@ -1,12 +1,10 @@
-package urlValidator;
+package UrlValidator;
 
 import javafx.util.Pair;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.util.*;
 
 import java.util.function.Predicate;

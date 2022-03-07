@@ -1,4 +1,4 @@
-package urlValidator;
+package UrlValidator;
 
 import javafx.util.Pair;
 

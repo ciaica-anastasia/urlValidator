@@ -274,14 +274,14 @@ final class UrlElement {
     // https://habr.com/ru/post/232385/
     boolean schemeIsValid() {
         if ((scheme == null) || ("".equals(scheme))) {
-            return true;
+            return false;
         }
         return basicCheck(scheme, "+-.") && Character.isLetter(scheme.charAt(0));
     }
 
     boolean pathIsValid() {
         if (path == null) {
-            return true;
+            return false;
         }
         return basicCheck(path, ":@%" + SUB_DELIMITS + NOT_RESERVED);
     }

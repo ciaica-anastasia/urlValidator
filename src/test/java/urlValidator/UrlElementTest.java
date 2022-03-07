@@ -1,4 +1,4 @@
-package UrlValidator;
+package urlValidator;
 
 import org.junit.Test;
 

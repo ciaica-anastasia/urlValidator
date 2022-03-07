@@ -1,6 +1,8 @@
-package UrlValidator;
+package urlValidator;
 
+import javafx.util.Pair;
 import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -13,7 +15,8 @@ public final class UrlValidator {
     private final Predicate<String> schemes;
     private final Predicate<String> logins;
     private final Predicate<String> passwords;
-    private final Predicate<String> hosts;
+    private final Predicate<String> whosts;
+    private final Predicate<String> bhosts;
     private final Predicate<String> ports;
     private final Predicate<String> paths;
     private final Predicate<String> queries;
@@ -23,7 +26,8 @@ public final class UrlValidator {
         this.schemes = userOptions.schemes;
         this.logins = userOptions.logins;
         this.passwords = userOptions.passwords;
-        this.hosts = userOptions.hosts;
+        this.whosts = userOptions.whosts;
+        this.bhosts = userOptions.bhosts;
         this.ports = userOptions.ports;
         this.paths = userOptions.paths;
         this.queries = userOptions.queries;
@@ -32,7 +36,7 @@ public final class UrlValidator {
 
     public boolean isValid(@NotNull String url) {
         UrlElement element = urlParser(url);
-        return element.hostnameIsValid(this.hosts) && element.schemeIsValid() && element.portIsValid()
+        return element.hostnameIsValid(this.whosts, this.bhosts) && element.schemeIsValid() && element.portIsValid()
                 && element.queryIsValid() && element.pathIsValid() && element.fragmentIsValid();
     }
 
@@ -56,7 +60,7 @@ final class UrlElement {
     private static final String NOT_RESERVED = "-._~";
     private static final long MIN_PORT = 0;
     private static final long MAX_PORT = 65535;
-    private static final String IPV6_REGEX = "(^[0-9a-fA-F:]+$)(.*1{2,}.*)";
+    private static final String IPV6_REGEX = "(^[0-9a-fA-F:]+$)";
     private static final List<String> specialPurposeTlds = Arrays.asList(
             "example", "test", "localhost", "invalid",
             "local", "onion", "home", "corp", "arpa", "int");
@@ -70,11 +74,19 @@ final class UrlElement {
         this.fragment = fragment;
     }
 
-    boolean hostnameIsValid(@NotNull Predicate<String> hosts) {
+    @SneakyThrows
+    boolean hostnameIsValid(Predicate<String> whosts, Predicate<String> bhosts) {
+        if (host.isEmpty()) {
+            return false;
+        }
 
         // check if hostname matches given predicate
-        if (hosts.test(host)) {
+        if (whosts != null && whosts.test(host)) {
             return true;
+        }
+
+        if (bhosts != null && !bhosts.test(host)) {
+            return false;
         }
 
         // chomp leading dot
@@ -93,7 +105,10 @@ final class UrlElement {
         }
 
         // numerical IPv4 addresses
-        ArrayList<String> octets = parseIPv4(labels);
+        Boolean isSymbHost = false;
+        Pair<ArrayList<String>, Boolean> pair = parseIPv4(labels, isSymbHost);
+        ArrayList<String> octets = pair.getKey();
+        isSymbHost = pair.getValue();
         boolean isIP = false;
         if (!octets.isEmpty()) {
             isIP = true;
@@ -113,7 +128,7 @@ final class UrlElement {
             }
 
             host = String.join(".", octets);
-        } else if (host.matches(IPV6_REGEX)) {
+        } else if (host.matches(IPV6_REGEX) || host.matches(":")) {
             // expand the IPv6 address
             ArrayList<String> groups = new ArrayList<>(Arrays.asList(host.split("\\:")));
             if (groups.size() < 8) {
@@ -136,7 +151,12 @@ final class UrlElement {
 
                 if (max <= 0xffff) {
                     isIP = true;
-                    String norm = groups.stream().map(group -> String.format("%-" + 4 + "s", group).replace(' ', '0')).collect(Collectors.joining(":"));
+                    // fill labels with zeros till length equals 4
+                    String norm = groups
+                            .stream()
+                            .map(group -> String.format("%-" + 4 + "s", group)
+                                    .replace(' ', '0'))
+                            .collect(Collectors.joining(":"));
                     if (max == 0 // the unspecified address
                             // loopback
                             || norm.equals("0000:0000:0000:0000:0000:00000:0000:0001")
@@ -160,28 +180,49 @@ final class UrlElement {
                             || norm.matches("^ff")) {
                         return false;
                     }
+                } else {
+                    return false;
                 }
                 // Extra: compress the address into its canonical form
-            }
-        }
-        if (isIP) {
+            } // invalid IPV4
+        } else if (!isSymbHost) {
             return false;
-        } else {
+        }
+
+        if (!isIP) {
             // only fully-qualified hostnames are allowed
             // (i.e. they must have at least 2 labels)
             if (labels.size() < 2) {
                 return false;
             }
 
-            // the top-level domain name must not contain a hyphen
-            // or digit unless it is an IDN
             String tld = labels.get(labels.size() - 1);
-            // TODO
-            //top_level_domains check, else false
 
-            if (!tld.startsWith("xn--") && tld.matches("[-0-9]")
-                    // a tld label must be at least two characters long and may be as long as 63 characters
-                    || tld.length() < 2 || tld.length() > 63) {
+            // TODO
+            // если человек хочет принимать только известные top-level-domains, флажок нужен
+            // tld check, where?
+            /*
+            BufferedReader br = new BufferedReader(new FileReader("src/main/resources/top-level-domain-names.csv"));
+            String nextLine;
+            boolean isValidTld = false;
+            while ((nextLine = br.readLine()) != null) {
+                // use comma as separator
+                String[] cols = nextLine.split(",");
+                if (cols[1].substring(1).equals(tld)) {
+                    isValidTld = true;
+                }
+            }
+
+            if (!isValidTld) {
+                return false;
+            }
+             */
+
+            // a tld label must be at least two characters long and may be as long as 63 characters
+            if (tld.length() < 2 || tld.length() > 63
+                    // the top-level domain name must not contain a hyphen
+                    // or digit unless it is an IDN
+                    || (tld.length() > 3 && !tld.substring(0, 4).equals("xn--") && tld.matches(".*[-0-9].*"))) {
                 return false;
             }
 
@@ -205,12 +246,15 @@ final class UrlElement {
             // we allow all Unicode characters except the forbidden ones in the US-ASCII range
             // i.e. we check that only alphabetic characters (a-z), decimal digits (0-9),
             // the hyphen (-), and the dot (.) or characters outside the range of US-ASCII are contained in the hostname.
-            return !host.matches("[\\x00-\\x2c\\x2f\\x3a-\\x60\\x7b-\\x7f]");
+            if (host.matches("[\\x00-\\x2c\\x2f\\x3a-\\x60\\x7b-\\x7f]")) {
+                return false;
+            }
         }
+        return true;
     }
 
-    private @NotNull ArrayList<String> parseIPv4(ArrayList<String> labels) {
-        return new UrlNormalizer().parseIPv4(labels);
+    private Pair<ArrayList<String>, Boolean> parseIPv4(ArrayList<String> labels, Boolean isSymbHost) {
+        return new UrlNormalizer().parseIPv4(labels, isSymbHost);
     }
 
     private boolean basicCheck(@NotNull String paramForCheck, @NotNull String allowedSymbols) {

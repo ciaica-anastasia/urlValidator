@@ -1,4 +1,4 @@
-# UrlValidator
+# urlValidator
 
 ## Contact information
 

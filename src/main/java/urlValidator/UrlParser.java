@@ -1,4 +1,4 @@
-package UrlValidator;
+package urlValidator;
 
 import java.util.List;
 import java.util.Arrays;

@@ -1,4 +1,4 @@
-package UrlValidator;
+package urlValidator;
 
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.Contract;
@@ -21,7 +21,8 @@ public final class Options {
     public Predicate<String> schemes;
     public Predicate<String> logins;
     public Predicate<String> passwords;
-    public Predicate<String> hosts;
+    public Predicate<String> whosts;
+    public Predicate<String> bhosts;
     public Predicate<String> ports;
     public Predicate<String> paths;
     public Predicate<String> queries;
@@ -42,8 +43,13 @@ public final class Options {
         return this;
     }
 
-    public Options setNewHosts(Predicate<String> hosts) {
-        this.hosts = hosts;
+    public Options setNewWhosts(Predicate<String> whosts) {
+        this.whosts = whosts;
+        return this;
+    }
+
+    public Options setNewBhosts(Predicate<String> bhosts) {
+        this.bhosts = bhosts;
         return this;
     }
 

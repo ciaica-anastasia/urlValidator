@@ -1,11 +1,11 @@
-package UrlValidator;
+package urlValidator;
 
 public class Main {
     public static void main(String[] args) {
 
         UrlValidator validator = new Options().setNewLogins(logins -> false).build();
-        UrlValidator test1 = new Options().setNewHosts(logins -> true).build();
-        final UrlValidator test2 = new UrlValidator(new Options());
+        UrlValidator test1 = new Options().setNewWhosts(logins -> true).build();
+        final UrlValidator test2 = new Options().build();
 
         //Пользователь вводит свою url вместо "URL"
         if (validator.isValid("URL")) {
@@ -33,8 +33,8 @@ public class Main {
 
         /*
         Это с последнего созвона пример от Антона:
-            final UrlValidator validation = new UrlValidator(
-                new UrlValidator.Options().authorityValidation(
+            final urlValidator validation = new urlValidator(
+                new urlValidator.Options().authorityValidation(
                     new DefaultAuthorityValidation(
                         new DomainValidation(new DomainValidation.Options()
                         .tldValidation(tld -> true)

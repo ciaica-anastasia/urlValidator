@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.junit.*;
 
-public class Tests {
+public class TestParser {
 
     //проверка Parser целиком на сложных строках
     @Test

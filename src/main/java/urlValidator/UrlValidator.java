@@ -70,7 +70,7 @@ final class UrlElement {
         this.fragment = fragment;
     }
 
-    boolean hostnameIsValid(Predicate<String> hosts) {
+    boolean hostnameIsValid(@NotNull Predicate<String> hosts) {
 
         // check if hostname matches given predicate
         if (hosts.test(host)) {
@@ -87,7 +87,7 @@ final class UrlElement {
 
         // consecutive dots are not allowed
         for (String label : labels) {
-            if (label == "") {
+            if ("".equals(label)) {
                 return false;
             }
         }
@@ -118,7 +118,7 @@ final class UrlElement {
             ArrayList<String> groups = new ArrayList<>(Arrays.asList(host.split("\\:")));
             if (groups.size() < 8) {
                 for (int i = 0; i < groups.size(); ++i) {
-                    if (groups.get(i) == "") {
+                    if ("".equals(groups.get(i))) {
                         groups.set(i, "0");
                         int missing = 7 - groups.size();
                         for (int j = 0; j <= missing; ++j) {
@@ -179,7 +179,7 @@ final class UrlElement {
             // TODO
             //top_level_domains check, else false
 
-            if (!tld.substring(0, 4).equals("xn--") && tld.matches("[-0-9]")
+            if (!tld.startsWith("xn--") && tld.matches("[-0-9]")
                     // a tld label must be at least two characters long and may be as long as 63 characters
                     || tld.length() < 2 || tld.length() > 63) {
                 return false;
@@ -205,15 +205,11 @@ final class UrlElement {
             // we allow all Unicode characters except the forbidden ones in the US-ASCII range
             // i.e. we check that only alphabetic characters (a-z), decimal digits (0-9),
             // the hyphen (-), and the dot (.) or characters outside the range of US-ASCII are contained in the hostname.
-            if (host.matches("[\\x00-\\x2c\\x2f\\x3a-\\x60\\x7b-\\x7f]")) {
-                return false;
-            }
-
-            return true;
+            return !host.matches("[\\x00-\\x2c\\x2f\\x3a-\\x60\\x7b-\\x7f]");
         }
     }
 
-    private ArrayList<String> parseIPv4(ArrayList<String> labels) {
+    private @NotNull ArrayList<String> parseIPv4(ArrayList<String> labels) {
         return new UrlNormalizer().parseIPv4(labels);
     }
 
@@ -224,7 +220,7 @@ final class UrlElement {
         Set<Character> symbols = allowedSymbols.chars()
                 .mapToObj(e -> (char) e).collect(Collectors.toSet());
         for (Character curChar : paramForCheck.toCharArray()) {
-            if (!(Character.isAlphabetic(curChar) || symbols.contains(curChar))) {
+            if (!(Character.isAlphabetic(curChar) || Character.isDigit(curChar) || symbols.contains(curChar))) {
                 return false;
             }
         }
@@ -233,14 +229,23 @@ final class UrlElement {
 
     // https://habr.com/ru/post/232385/
     boolean schemeIsValid() {
+        if ((scheme == null) || ("".equals(scheme))) {
+            return true;
+        }
         return basicCheck(scheme, "+-.") && Character.isLetter(scheme.charAt(0));
     }
 
     boolean pathIsValid() {
+        if (path == null) {
+            return true;
+        }
         return basicCheck(path, ":@%" + SUB_DELIMITS + NOT_RESERVED);
     }
 
     boolean queryIsValid() {
+        if (query == null) {
+            return true;
+        }
         return basicCheck(query, ":@/?%" + SUB_DELIMITS + NOT_RESERVED);
     }
 
@@ -250,7 +255,7 @@ final class UrlElement {
 
     boolean portIsValid() {
         if ((port == null) || (port.isEmpty())) {
-            return false;
+            return true;
         }
         for (Character curChar : port.toCharArray()) {
             if (!Character.isDigit(curChar)) {

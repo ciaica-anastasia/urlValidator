@@ -52,7 +52,7 @@ public final class UrlParser {
         }
     }
 
-    private UrlSplitted urlSplit(@NotNull String url) {
+    private @NotNull UrlSplitted urlSplit(@NotNull String url) {
         String newUrl = url;
         String newScheme = "";
         for (String b : unsafeUrlBytesToRemove) {

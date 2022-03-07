@@ -1,4 +1,4 @@
-package urlValidator;
+package UrlValidator;
 
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;

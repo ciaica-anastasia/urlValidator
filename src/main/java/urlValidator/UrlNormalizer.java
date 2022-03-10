@@ -15,15 +15,6 @@ public final class UrlNormalizer {
     private static final String HEXADECIMAL_NUMBER_REGEX = "^(0+[xX])?([0-9a-fA-F]+)$";
     private static final String DECIMAL_NUMBER_REGEX = "^[1-9][0-9]*";
 
-    // checks whether a value matches a regex
-//    static boolean regexMatch(String regex, String value) {
-//        Matcher m = getMatcher(regex, value);
-//
-//        if (m.find() && m.group().equals(value)) {
-//            return true;
-//        } else return false;
-//    }
-
     private static Matcher getMatcher(String regex, String value) {
         Pattern p = Pattern.compile(regex);
         return p.matcher(value);
@@ -73,13 +64,11 @@ public final class UrlNormalizer {
                 label = String.valueOf(Long.parseLong(label, 16));
                 partsIPv4.add(label);
             } else if (label.contains(":")) {
-                isSymbHost = false;
                 partsIPv4.clear();
-                return new Pair<>(partsIPv4, isSymbHost);
+                return new Pair<>(partsIPv4, false);
             } else {
-                isSymbHost = true;
                 partsIPv4.clear();
-                return new Pair<>(partsIPv4, isSymbHost);
+                return new Pair<>(partsIPv4, true);
             }
         }
 

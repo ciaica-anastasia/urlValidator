@@ -222,7 +222,7 @@ final class UrlElement {
             if (tld.length() < 2 || tld.length() > 63
                     // the top-level domain name must not contain a hyphen
                     // or digit unless it is an IDN
-                    || (tld.length() > 3 && !tld.substring(0, 4).equals("xn--") && tld.matches(".*[-0-9].*"))) {
+                    || (tld.length() > 3 && !tld.startsWith("xn--") && tld.matches(".*[-0-9].*"))) {
                 return false;
             }
 

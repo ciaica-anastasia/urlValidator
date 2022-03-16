@@ -23,7 +23,6 @@
         <url>https://github.com/ciaica-anastasia/urlValidator</url>
         <connection>scm:git:https://github.com/ciaica-anastasia/urlValidator.git</connection>
         <developerConnection>scm:git:https://github.com/ciaica-anastasia/urlValidator.git</developerConnection>
-    <tag>urlvalidator-1.0</tag>
   </scm>
 
     <developers>

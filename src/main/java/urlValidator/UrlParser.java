@@ -20,8 +20,6 @@ public final class UrlParser {
                 cut = Math.min(cut, firstCut + start);
             }
         }
-        String a = url.substring(start, cut);
-        String b = url.substring(cut);
         return new HostPort(url.substring(start, cut), url.substring(cut));
     }
 

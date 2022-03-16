@@ -4,7 +4,7 @@
 
     <groupId>io.github.ciaica-anastasia.urlvalidator</groupId>
     <artifactId>urlvalidator</artifactId>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.2</version>
     <packaging>jar</packaging>
 
     <name>UrlValidator</name>
@@ -23,7 +23,7 @@
         <url>https://github.com/ciaica-anastasia/urlValidator</url>
         <connection>scm:git:https://github.com/ciaica-anastasia/urlValidator.git</connection>
         <developerConnection>scm:git:https://github.com/ciaica-anastasia/urlValidator.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>urlvalidator-0.2</tag>
   </scm>
 
     <developers>
@@ -190,7 +190,7 @@
 
     <profiles>
         <profile>
-            <id>release</id>
+            <id>ossrh</id>
             <build>
                 <plugins>
                     <plugin>

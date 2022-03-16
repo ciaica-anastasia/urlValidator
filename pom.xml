@@ -4,7 +4,7 @@
 
     <groupId>io.github.ciaica-anastasia.urlvalidator</groupId>
     <artifactId>urlvalidator</artifactId>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.1</version>
     <packaging>jar</packaging>
 
     <name>UrlValidator</name>
@@ -23,7 +23,7 @@
         <url>https://github.com/ciaica-anastasia/urlValidator</url>
         <connection>scm:git:https://github.com/ciaica-anastasia/urlValidator.git</connection>
         <developerConnection>scm:git:https://github.com/ciaica-anastasia/urlValidator.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>urlvalidator-0.1</tag>
   </scm>
 
     <developers>
@@ -121,10 +121,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
-                <version>${plugin.maven.gpg.ver}</version>
-                <configuration>
-                    <passphrase>${gpg.passphrase}</passphrase>
-                </configuration>
+                <version>1.5</version>
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
